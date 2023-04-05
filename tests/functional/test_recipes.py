@@ -8,7 +8,7 @@ def test_home_page(test_client):
     """
     _response = test_client.get('/')
     assert _response.status_code == 200
-    assert b'Surfers Lookout' in _response.data
+    assert b'Big Bank' in _response.data
     assert b'World' in _response.data
 
 
