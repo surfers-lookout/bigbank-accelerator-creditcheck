@@ -1,0 +1,102 @@
+accelerator:
+  displayName: Big Bank Loan Credit Check
+  description: Scafolding for creation of a new credit check module for Loan System
+  iconUrl: https://raw.githubusercontent.com/surfers-lookout/bigbank-accelerator-kyc/main/main/static/images/bb-logo.png
+  tags:
+  - bigbank
+  - python
+  - web
+  - tanzu
+  options:
+  - name: repositoryPrefix
+    inputType: text
+    label: Prefix for the container image repository
+    defaultValue: docker.io/<project>
+    required: true
+  - name: pageColor
+    label: Initial color displayed by the root web page
+    inputType: radio
+    display: true
+    defaultValue: blue
+    choices:
+      - text: Blue
+        value: blue
+      - text: Green
+        value: green
+      - text: Yellow
+        value: yellow
+      - text: Red
+        value: red
+  - name: gitopsEnabled
+    label: 'GitOps Deployment Model'
+    description: Deployment utilises Git as the configuration state store and approval process
+    display: true
+    dataType: boolean
+    defaultValue: false
+  - name: gitopsAccount
+    inputType: text
+    label: 'GitOps Account Name'
+    description: Account name for repository access for GitOps
+    defaultValue: ''
+    dependsOn:
+      name: gitopsEnabled
+  - name: gitopsEmail
+    inputType: text
+    label: 'GitOps Email Address'
+    description: Email address to be used for GitOps access
+    defaultValue: ''
+    dependsOn:
+      name: gitopsEnabled
+    
+engine:
+  merge:
+  - include: [ "**/*" ]
+    exclude: [ "config/*.yaml", "Tiltfile", "README.md", "catalog/*.yaml" ]
+
+  - include: [ "Tiltfile" ]
+    chain:
+    - type: ReplaceText
+      substitutions:
+      - text: bigbankloanaccelerator
+        with: "#artifactId.toLowerCase()"
+      - text: docker.io/project
+        with: "#repositoryPrefix"
+
+  - include: [ "config/*.yaml" ]
+    chain:
+    - type: ReplaceText
+      condition: "#bsGitRepository != null"
+      substitutions:
+      - text: "https://github.com/surfers-lookout/BigBank-Loan-Accelerator"
+        with: "'https://' + #bsGitRepository.substring(0, #bsGitRepository.indexOf('?')) + '/' + #bsGitRepository.substring((#bsGitRepository.indexOf('=')+1), #bsGitRepository.indexOf('&')) + '/' + #bsGitRepository.substring((#bsGitRepository.indexOf('repo=')+5))"
+    - type: ReplaceText
+      condition: "#gitopsEnabled"
+      substitutions:
+      - text: "gitopsaccountname"
+        with: "#gitopsAccount.toLowerCase()"
+      - text: "gitopsemailaddress"
+        with: "#gitopsEmail.toLowerCase()"
+    - type: ReplaceText
+      substitutions:
+      - text: ": bigbankloanaccelerator"
+        with: "': ' + #artifactId.toLowerCase()"
+      - text: "value: blue"
+        with: "'value: ' + #pageColor"
+
+  - include: [ "README.md" ]
+    chain:
+    - type: ReplaceText
+      substitutions:
+      - text: BigBankLoanAccelerator
+        with: "#artifactId"
+      - text: bigbankloanaccelerator
+        with: "#artifactId"
+      - text: bigbank-loan-accelerator
+        with: "#artifactId"
+
+  - include: [ "catalog/*.yaml" ]
+    chain:
+    - type: ReplaceText
+      substitutions:
+      - text: bigbank-accelerator-creditcheck
+        with: "#artifactId"

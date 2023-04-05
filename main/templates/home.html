@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+
+{% block content %}
+
+    <div class="container-title">
+        <div class="center">
+            <label style="color:{{ color_code(color) }};">Hello {{ color }} World</label>
+        </div>
+    </div>
+    <div class="container-middle">
+        <div class="container-round" style="background-color:{{ color_code(color) }};"></div>
+    </div>
+    <div class="container-footer">
+        <div class="center">
+            <label>database: {{config.SQLALCHEMY_DATABASE_URI}}</label>
+        </div>
+    </div>
+{% endblock %}
+
