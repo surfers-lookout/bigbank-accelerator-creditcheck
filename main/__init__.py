@@ -1,24 +1,32 @@
-from flask import Flask
-from main import config
-from flask_sqlalchemy import SQLAlchemy
+from fastapi import FastAPI
+from .logger import logger
 from .data.utilities import DataManager
 
 
-def create_app(config_name):
-    app = Flask(__name__)
-    app.config.from_object(config.config[config_name])
-    config.config[config_name].init_app(app)
-    with app.app_context():
-        app.logger.info('Created app context')
+tags_metadata = [
+    {
+        "name": "general",
+        "description": "General system level APIs",
+    },
+]
 
-        from main.data.models import db
-        db.init_app(app)
-        app.logger.info('Setup Data Models')
-        DataManager.initDB()
 
-        app.logger.info('Import blueprints')
-        from main.blueprints import bp as main_blueprint
-        app.register_blueprint(main_blueprint)
+def create_app() -> FastAPI:
+    logger.info(f'Initialising App Factory')
+    app = FastAPI(
+        debug=True, title="Surfers FastAPI Accelerator",
+        description="REST APIs for surf system",
+        version="0.1.0",
+        openapi_url="/api/v1/api-docs",
+        openapi_tags=tags_metadata
+    ) 
+
+    logger.info(f'Setup database')
+    DataManager.initDB()
+
+    logger.info(f'Create routers')
+
+    from .apis.general import router as general_router
+    app.include_router(general_router)
 
     return app
-

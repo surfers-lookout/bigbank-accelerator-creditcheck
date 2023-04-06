@@ -1,29 +1,25 @@
 import json
 import os
-from sqlalchemy.sql import text
-from flask import current_app as app
-from main.data.models import db
+import sys
+from unicodedata import category
+from . import models, SessionLocal, Base
+from main.config import settings
+from main.logger import logger
+
+
 
 class DataManager():
 
     @staticmethod
     def initDB():
-        app.logger.info('DB URI: %s',app.config['SQLALCHEMY_DATABASE_URI'])
-        app.logger.info('Create DB')
+        logger.info(f'DB URI: {settings.DATABASE_URL}')
+        logger.info('Create database')
         
-        _localfile = os.path.join(os.getcwd(), 'data.sqlite')
+        _localfile = os.path.join(settings.BASEDIR, 'data.sqlite')
         if os.path.exists(_localfile):
             os.remove(_localfile)
-        db.create_all()
-        db.session.commit()
-
-
-    @staticmethod
-    def testdb():
-        app.logger.info('Test DB Connection')
-        try:
-            db.session.execute(text('SELECT foo'))
-            return True
-        except Exception as e:
-            app.logger.error(f'Database connection attempt failed: {str(e)}')
-            return False
+        _session = SessionLocal()
+        Base.metadata.create_all(_session.bind)
+        _session.commit()
+        logger.info('Database creation completed')
+                

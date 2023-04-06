@@ -3,8 +3,9 @@
 apiVersion: backstage.io/v1alpha1
 kind: Component
 metadata:
-  name: bigbank-accelerator-creditcheck
-  description: Big Bank Accelerator
+  name: bigbankloanaccelerator
+  namespace: default
+  description: Big Bank Credit Check Component
   tags:
     - app-accelerator
     - python
@@ -16,5 +17,8 @@ metadata:
 spec:
   type: service
   lifecycle: experimental
-  owner: group:surfers-crew
-  system: bigbank-system
+  owner: group:banker-crew
+  system: banker-system
+  providesApis:
+    - default/creditcheck-tap2.tanzu.rocks # need to replace with the correct context for the deployment
+    # - <namespace>/<name>-<tap root dns> is the syntax

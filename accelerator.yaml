@@ -1,32 +1,19 @@
 accelerator:
-  displayName: Big Bank Loan Credit Check
-  description: Scafolding for creation of a new credit check module for Loan System
-  iconUrl: https://raw.githubusercontent.com/surfers-lookout/bigbank-accelerator-kyc/main/main/static/images/bb-logo.png
+  displayName: Big Bank Loan Credit Check Accelerator
+  description: Contains the Biug Bank system Restful loan checkl service scafolding
+  iconUrl: https://raw.githubusercontent.com/surfers-lookout/bigbank-accelerator-creditcheck/main/main/static/images/bb-logo.png
   tags:
   - bigbank
   - python
-  - web
-  - tanzu
+  - restapi
+  - openapi
   options:
   - name: repositoryPrefix
     inputType: text
     label: Prefix for the container image repository
-    defaultValue: docker.io/<project>
+    defaultValue: docker.io/<yourname>
     required: true
-  - name: pageColor
-    label: Initial color displayed by the root web page
-    inputType: radio
-    display: true
-    defaultValue: blue
-    choices:
-      - text: Blue
-        value: blue
-      - text: Green
-        value: green
-      - text: Yellow
-        value: yellow
-      - text: Red
-        value: red
+
   - name: gitopsEnabled
     label: 'GitOps Deployment Model'
     description: Deployment utilises Git as the configuration state store and approval process
@@ -34,24 +21,20 @@ accelerator:
     dataType: boolean
     defaultValue: false
   - name: gitopsAccount
-    inputType: text
     label: 'GitOps Account Name'
     description: Account name for repository access for GitOps
-    defaultValue: ''
     dependsOn:
       name: gitopsEnabled
   - name: gitopsEmail
-    inputType: text
     label: 'GitOps Email Address'
     description: Email address to be used for GitOps access
-    defaultValue: ''
     dependsOn:
       name: gitopsEnabled
-    
+ 
 engine:
   merge:
   - include: [ "**/*" ]
-    exclude: [ "config/*.yaml", "Tiltfile", "README.md", "catalog/*.yaml" ]
+    exclude: [ "config/*.yaml", "Tiltfile", "README.md", "catalog/*.yaml", "mkdocs.yml"  ]
 
   - include: [ "Tiltfile" ]
     chain:
@@ -67,7 +50,7 @@ engine:
     - type: ReplaceText
       condition: "#bsGitRepository != null"
       substitutions:
-      - text: "https://github.com/surfers-lookout/BigBank-Loan-Accelerator"
+      - text: "https://github.com/surferslookout/bigbank-accelerator-creditcheck"
         with: "'https://' + #bsGitRepository.substring(0, #bsGitRepository.indexOf('?')) + '/' + #bsGitRepository.substring((#bsGitRepository.indexOf('=')+1), #bsGitRepository.indexOf('&')) + '/' + #bsGitRepository.substring((#bsGitRepository.indexOf('repo=')+5))"
     - type: ReplaceText
       condition: "#gitopsEnabled"
@@ -80,23 +63,29 @@ engine:
       substitutions:
       - text: ": bigbankloanaccelerator"
         with: "': ' + #artifactId.toLowerCase()"
-      - text: "value: blue"
-        with: "'value: ' + #pageColor"
 
   - include: [ "README.md" ]
     chain:
     - type: ReplaceText
       substitutions:
-      - text: BigBankLoanAccelerator
-        with: "#artifactId"
       - text: bigbankloanaccelerator
-        with: "#artifactId"
-      - text: bigbank-loan-accelerator
         with: "#artifactId"
 
   - include: [ "catalog/*.yaml" ]
     chain:
     - type: ReplaceText
       substitutions:
-      - text: bigbank-accelerator-creditcheck
+      - text: bigbankloanaccelerator
         with: "#artifactId"
+
+  - include: [ "mkdocs.yml" ]
+    chain:
+    - type: ReplaceText
+      substitutions:
+      - text: bigbankloanaccelerator
+        with: "#artifactId"
+    - type: ReplaceText
+      condition: "#bsGitRepository != null"
+      substitutions:
+      - text: "https://github.com/surferslookout/bigbank-accelerator-creditcheck"
+        with: "'https://' + #bsGitRepository.substring(0, #bsGitRepository.indexOf('?')) + '/' + #bsGitRepository.substring((#bsGitRepository.indexOf('=')+1), #bsGitRepository.indexOf('&')) + '/' + #bsGitRepository.substring((#bsGitRepository.indexOf('repo=')+5))"

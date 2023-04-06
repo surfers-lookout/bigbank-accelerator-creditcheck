@@ -1,39 +1,33 @@
-import json
-import sys
-from unicodedata import category
-from flask import jsonify
-from flask import current_app as app
-from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import Column, Integer, String, Text
 from sqlalchemy.exc import IntegrityError
-from sqlalchemy.inspection import inspect
+from main.logger import logger
+from . import Base
+from . import SessionLocal
 
-db = SQLAlchemy()
-
-# Dummy table to show the model standard
-class Dummy(db.Model):
+# Dummy table for an example
+class Dummy(Base):
     __tablename__ = 'dummy'
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(64), unique=True, index=True)
-    description = db.Column(db.String(64), unique=True, index=True)
+    id = Column(Integer, primary_key=True)
+    name = Column(String(64), unique=True, index=True)
+    comment = Column(String(64), unique=False, index=True)
 
-    def __init__(self, name: str, description: str):
+    def __init__(self, name: str, comment: str):
         self.name = name
-        self.description = description
+        self.comment = comment
         self.id = self.add()
 
     def __repr__(self):
         return self.id
 
     def add(self):
-        app.logger.info('Adding new Dummy record: %s', self.name)
         _id = None
-        db.session.add(self)
+        _session = SessionLocal()
+        _session.add(self)
         try:
-            db.session.commit()
-            app.logger.info('Dummy Record Added: %s', self.name)
+            _session.commit()
+            logger.info('Dummy Record Added: %s', self.name)
         except IntegrityError:
-            app.logger.error('New dummy record addition failed: %s', self.name)
-            db.session.rollback()
+            _session.rollback()
 
         if self.id is None:
             _resp = Dummy.query.with_entities(Dummy.id).filter(Dummy.name == self.name).first()
@@ -45,7 +39,8 @@ class Dummy(db.Model):
 
     @staticmethod
     def get():
-        result = db.session.query(Dummy).all()
+        _session = SessionLocal()
+        result = _session.query(Dummy).all()
         return result
 
 

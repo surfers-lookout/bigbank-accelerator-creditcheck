@@ -4,20 +4,14 @@ metadata:
   name: bigbankloanaccelerator
   labels:
     apps.tanzu.vmware.com/workload-type: web
-    #deployment-model: bluegreen
-    app.kubernetes.io/part-of: surferslookout
+    app.kubernetes.io/part-of: bigbank
     apps.tanzu.vmware.com/has-tests: "true"
     apps.tanzu.vmware.com/language: python
+    apis.apps.tanzu.vmware.com/register-api: "true"
 spec:
   params:
-  #- name: alternateRevision
-  #  value: bigbankloanaccelerator-00001
   - name: clusterBuilder
-    value: full-jammy
-  #- name: git_user_email
-  #  value: gitopsemailaddress
-  #- name: git_user_name
-  #  value: gitopsaccountname
+    value: full
   - name: annotations
     value:
       autoscaling.knative.dev/min-scale: "1"
@@ -28,17 +22,16 @@ spec:
       autoscaling.knative.dev/target: "40"
       autoscaling.knative.dev/metric: "rps"
       autoscaling.knative.dev/target: "60"
+  - name: api_descriptor
+    value:
+      type: openapi
+      location:
+        path: "/api/v1/api-docs"
+      owner: group:banker-crew
+      system: bigbank-system
+      description: "Bigbank REST API accelerator"
   source:
     git:
-      url: https://github.com/surfers-lookout/BigBank-Loan-Accelerator
+      url: https://github.com/surferslookout/bigbank-accelerator-creditcheck
       ref:
         branch: main
-  #serviceClaims:
-  #  - name: db
-  #    ref:
-  #      apiVersion: v1
-  #      kind: Secret
-  #      name: bigbank-db
-  env:
-  - name: COLOR
-    value: blue

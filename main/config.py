@@ -1,57 +1,50 @@
 import os
-from pyservicebinding import binding
+import pathlib
+import sys
+from functools import lru_cache
 
-basedir = os.getcwd()
-
-class Config:
-    VERSION = '3'
-    COLOR = os.environ.get('COLOR') or 'blue'
-    SECRET_KEY = os.environ.get('SECRET_KEY') or 'secret'
-    SESSION_COOKIE_HTTPONLY = False
-    ENV = 'unset'
-    USER_PORT = os.environ.get('USER_PORT') or "8080"
-    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or 'sqlite://'
-    SQLALCHEMY_TRACK_MODIFICATIONS = os.environ.get('DB_TRACK_MODIFICATIONS') or False
-
-    try:
-        _sb = binding.ServiceBinding()
-    except binding.ServiceBindingRootMissingError as msg:
-        print("Environment Variable SERVICE_BINDING_ROOT not set")
-    else:
-        _db = _sb.bindings('mysql')
-        if _db:
-            SQLALCHEMY_DATABASE_URI = f"mysql+pymysql://{_db[0]['username']}:{_db[0]['password']}@{_db[0]['host']}:{_db[0]['port']}/{_db[0]['database']}"
-            print(f'Binding DB URI: {SQLALCHEMY_DATABASE_URI}')
-        else:
-            print('MySQL Binding not found, reverting to sqlite local store')
+class BaseConfig:
+    BASEDIR: pathlib.Path = pathlib.Path(__file__).parent.parent
+    ENV: str = os.environ.get('ENV', 'default')
+    DATABASE_URL: str = os.environ.get('DATABASE_URL')
+    DATABASE_TRACK_MODIFICATIONS: bool = False
+    DATABASE_CONNECT_DICT: dict = {}
+    DATA_FILE: str =  f'{BASEDIR}/surfersapi/data/data.json'
+    USER_PORT: int = os.environ.get('USER_PORT', 8080)
+    BASE_DIR: pathlib.Path = pathlib.Path(__file__).parent.parent
+    CELERY_BROKER_URL: str = os.environ.get("CELERY_BROKER_URL", "redis://127.0.0.1:6379/0")            # NEW
+    CELERY_RESULT_BACKEND: str = os.environ.get("CELERY_RESULT_BACKEND", "redis://127.0.0.1:6379/0") 
 
 
-    @staticmethod
-    def init_app(app):
-        pass
-
-
-class ProductionConfig(Config):
+class ProductionConfig(BaseConfig):
     ENV = 'production'
-    if Config.SQLALCHEMY_DATABASE_URI is None:
-        SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(basedir, 'data.sqlite')
+    if BaseConfig.DATABASE_URL is None:
+        DATABASE_URL = 'sqlite:///' + os.path.join(BaseConfig.BASEDIR, 'data.sqlite')
 
-class DevelopmentConfig(Config):
+class DevelopmentConfig(BaseConfig):
     DEBUG = True
     ENV = 'development'
-    if Config.SQLALCHEMY_DATABASE_URI is None:
-        SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(basedir, 'data.sqlite')
+    if BaseConfig.DATABASE_URL is None:
+        DATABASE_URL = 'sqlite:///' + os.path.join(BaseConfig.BASEDIR, 'data.sqlite')
 
-class TestingConfig(Config):
+class TestingConfig(BaseConfig):
     TESTING = True
     ENV = 'testing'
-    if Config.SQLALCHEMY_DATABASE_URI is None:
-        SQLALCHEMY_DATABASE_URI = 'sqlite://'
+    if BaseConfig.DATABASE_URL is None:
+        DATABASE_URL = 'sqlite://'
 
 
-config = {
-    'development': DevelopmentConfig,
-    'testing': TestingConfig,
-    'production': ProductionConfig,
-    'default': DevelopmentConfig
-}
+@lru_cache()
+def get_settings():
+    config = {
+        'development': DevelopmentConfig,
+        'testing': TestingConfig,
+        'production': ProductionConfig,
+        'default': DevelopmentConfig
+    }
+    _config = config[BaseConfig.ENV]
+    if 'sqlite' in _config.DATABASE_URL:
+         _config.DATABASE_CONNECT_DICT = {'check_same_thread': False}
+    return _config
+
+settings = get_settings()

@@ -1,15 +1,14 @@
-# BigBankLoanAccelerator
-Web frontend scaffolding written in Python with the Flask micro framework for futher project modules aligned to the BigBankLoanAccelerator system. 
+# bigbankloanaccelerator
+REST API scaffolding written in Python with the FastAPI micro framework for for futher project modules delivering REST APIs aligned to the Big Bank Credit Check system. 
 
 # Overview
-Simple single page web service that will display a colored circle based on the configuration setting of the *COLOR* config setting. This can be set via the config module or via the *COLOR* environment variable (can be set in the .env file for testing).
-e.g. **export COLOR=red** will display a red circle as root page
+Single API Model with a single object that can be set and retrieved
 
 
 # Technical Detail
 ## Code Details
 - Language: Python 3.10+
-- Web Framework: [Flask](https://flask.palletsprojects.com) 
+- Web Framework: [FastAPI](https://fastapi.tiangolo.com/) 
 - Data access via [SqlAchemy](https://www.sqlalchemy.org/) 
 - Functional and Unit testing with [Pytest](https://docs.pytest.org)
 
