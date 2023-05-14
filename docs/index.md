@@ -1,8 +1,8 @@
-# SurfersFlaskAccelerator KYC Application Architecture
+# Credit Check Application Architecture
 
 ## Getting Started
 
-To implement the KYC process in Python, we will need to set up the development environment with the required tools and libraries. This includes:
+To implement the Credit Check process in Python, we will need to set up the development environment with the required tools and libraries. This includes:
 
 - Python 3.10 or later: Download and install the latest version of Python from https://www.python.org/downloads/.
 - Virtual Environment: Create a virtual environment to manage dependencies, using `python -m venv venv` and activate it.
