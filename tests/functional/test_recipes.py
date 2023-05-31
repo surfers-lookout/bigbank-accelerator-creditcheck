@@ -3,13 +3,13 @@ import pytest
 # Test web app home page
 def test_swagger_page(test_client):
     """
-    GIVEN Surfers API Web Service
+    GIVEN Big Bank API Web Service
     WHEN the '/docs' page is requested (GET)
     THEN check that the response is valid
     """
     _response = test_client.get('/docs')
     assert _response.status_code == 200, "Check Swagger site is responsive"
-    assert b'Surfers FastAPI Accelerator' in _response.content, "Check Swagger site title"
+    assert b'Big Bank FastAPI Accelerator' in _response.content, "Check Swagger site title"
 
 # Test against the health check page to ensure ok response
 def test_healthcheck_page(test_client):

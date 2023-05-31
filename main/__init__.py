@@ -14,7 +14,7 @@ tags_metadata = [
 def create_app() -> FastAPI:
     logger.info(f'Initialising App Factory')
     app = FastAPI(
-        debug=True, title="Surfers FastAPI Accelerator",
+        debug=True, title="Big Bank FastAPI Accelerator",
         description="REST APIs for surf system",
         version="0.1.0",
         openapi_url="/api/v1/api-docs",
