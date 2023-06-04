@@ -1,0 +1,40 @@
+{
+	"folders": [
+		{
+			"path": "../../../surfers-gitops"
+		},
+		{
+			"path": "../../../surfers-web"
+		},
+		{
+			"path": "../../../surfers-api"
+		},
+		{
+			"path": "../../../surfers-flask-accelerator"
+		},
+		{
+			"path": "../../../bigbank-test"
+		},
+		{
+			"path": "../../../surfers-fastapi-accelerator"
+		},
+		{
+			"path": "../../../creditcheck"
+		},
+		{
+			"path": "../../../bigbank-accelerator-kyc"
+		},
+		{
+			"path": "../.."
+		},
+		{
+			"path": "../../../kyc"
+		},
+		{
+			"path": "../../../risk-assessment"
+		},
+		{
+			"path": "../../../external-screeners"
+		}
+	]
+}

@@ -34,7 +34,7 @@ accelerator:
 engine:
   merge:
   - include: [ "**/*" ]
-    exclude: [ "config/*.yaml", "Tiltfile", "README.md", "catalog/*.yaml", "mkdocs.yml"  ]
+    exclude: [ "config/*.yaml", "Tiltfile", "README.md", "catalog/*.yaml", "mkdocs.yml", "techdocs_publish.sh"  ]
 
   - include: [ "Tiltfile" ]
     chain:
@@ -50,7 +50,7 @@ engine:
     - type: ReplaceText
       condition: "#bsGitRepository != null"
       substitutions:
-      - text: "https://github.com/surferslookout/bigbank-accelerator-creditcheck"
+      - text: "https://github.com/surfers-lookout/bigbank-accelerator-creditcheck"
         with: "'https://' + #bsGitRepository.substring(0, #bsGitRepository.indexOf('?')) + '/' + #bsGitRepository.substring((#bsGitRepository.indexOf('=')+1), #bsGitRepository.indexOf('&')) + '/' + #bsGitRepository.substring((#bsGitRepository.indexOf('repo=')+5))"
     - type: ReplaceText
       condition: "#gitopsEnabled"
@@ -87,5 +87,12 @@ engine:
     - type: ReplaceText
       condition: "#bsGitRepository != null"
       substitutions:
-      - text: "https://github.com/surferslookout/bigbank-accelerator-creditcheck"
+      - text: "https://github.com/surfers-lookout/bigbank-accelerator-creditcheck"
         with: "'https://' + #bsGitRepository.substring(0, #bsGitRepository.indexOf('?')) + '/' + #bsGitRepository.substring((#bsGitRepository.indexOf('=')+1), #bsGitRepository.indexOf('&')) + '/' + #bsGitRepository.substring((#bsGitRepository.indexOf('repo=')+5))"
+
+  - include: [ "techdocs_publish.sh" ]
+    chain:
+    - type: ReplaceText
+      substitutions:
+      - text: creditcheck
+        with: "#artifactId"
