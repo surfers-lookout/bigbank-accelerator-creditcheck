@@ -1,5 +1,5 @@
 APP_NAME = "bigbankloanaccelerator"
-SOURCE_IMAGE = os.getenv("SOURCE_IMAGE", default='docker.io/project/supply-chain/' + APP_NAME + '-source')
+SOURCE_IMAGE = os.getenv("SOURCE_IMAGE", default='us.gcr.io/lloyd-266015/supply-chain/' + APP_NAME + '-source')
 LOCAL_PATH = os.getenv("LOCAL_PATH", default='.')
 NAMESPACE = os.getenv("NAMESPACE", default='alpha')
 K8S_CONTEXT = os.getenv("K8S_CONTEXT", default="tap-aus-2")

@@ -1,1 +1,5 @@
-{}
+{
+    "java.server.launchMode": "Standard",
+    "tanzu.enableLiveHover": true,
+    "tanzu.sourceImage": "us.gcr.io/lloyd-266015/supply-chain/bigbankloanaccelerator-source"
+}

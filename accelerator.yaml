@@ -8,11 +8,11 @@ accelerator:
   - restapi
   - openapi
   options:
-  - name: repositoryPrefix
-    inputType: text
-    label: Prefix for the container image repository
-    defaultValue: docker.io/<yourname>
-    required: true
+  #- name: repositoryPrefix
+  #  inputType: text
+  #  label: Prefix for the container image repository
+  #  defaultValue: docker.io/<yourname>
+  #  required: true
 
   - name: gitopsEnabled
     label: 'GitOps Deployment Model'
@@ -34,7 +34,7 @@ accelerator:
 engine:
   merge:
   - include: [ "**/*" ]
-    exclude: [ "config/*.yaml", "Tiltfile", "README.md", "catalog/*.yaml", "mkdocs.yml", "techdocs_publish.sh"  ]
+    exclude: [ "config/*.yaml", "Tiltfile", "README.md", "catalog/*.yaml", "mkdocs.yml", "techdocs_publish.sh", ".vscode/*.json"  ]
 
   - include: [ "Tiltfile" ]
     chain:
@@ -42,8 +42,8 @@ engine:
       substitutions:
       - text: bigbankloanaccelerator
         with: "#artifactId.toLowerCase()"
-      - text: docker.io/project
-        with: "#repositoryPrefix"
+      #- text: docker.io/project
+      #  with: "#repositoryPrefix"
 
   - include: [ "config/*.yaml" ]
     chain:
@@ -96,3 +96,12 @@ engine:
       substitutions:
       - text: creditcheck
         with: "#artifactId"
+ 
+  - include: [ ".vscode/*.json" ]
+    chain:
+    - type: ReplaceText
+      substitutions:
+      - text: bigbankloanaccelerator
+        with: "#artifactId"
+      #- text: "docker.io/project"
+      #  with: "#repositoryPrefix"
